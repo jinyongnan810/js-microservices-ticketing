@@ -3,8 +3,8 @@ import { Password } from "../services/password";
 
 // Describe attributes needed to create a user
 interface UserAttrs {
-  email: String;
-  password: String;
+  email: string;
+  password: string;
 }
 // Describe a user model
 interface UserModel extends mongoose.Model<UserDoc> {
@@ -12,8 +12,8 @@ interface UserModel extends mongoose.Model<UserDoc> {
 }
 // Describe a user document
 interface UserDoc extends mongoose.Document {
-  email: String;
-  password: String;
+  email: string;
+  password: string;
 }
 
 const userSchema = new mongoose.Schema(
