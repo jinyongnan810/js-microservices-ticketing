@@ -3,7 +3,8 @@ ENV CI=true
 
 WORKDIR /app
 COPY ./package.json ./
-RUN npm install
+# ignore dev dependencies
+RUN npm install --only=prod
 
 COPY ./ ./
 
