@@ -31,7 +31,7 @@ router.post(
       await newUser.save();
       const userJwt = jwt.sign(
         { id: newUser._id, email: newUser.email },
-        "secret"
+        process.env.JWT_KEY! //ignore typescript error
       );
       req.session = {
         jwt: userJwt,
