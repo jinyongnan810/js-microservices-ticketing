@@ -1,4 +1,5 @@
-import axios from "axios";
+import CustomAxiosClient from "../api/axios-builder";
+
 const IndexPage = ({ currentUser }) => {
   return currentUser ? (
     <h1>hello {currentUser.email}</h1>
@@ -8,18 +9,8 @@ const IndexPage = ({ currentUser }) => {
 };
 // executed in the server side
 // except when redirected from the same app
-IndexPage.getInitialProps = async ({ req }) => {
-  let url = "";
-  let headers = {};
-  if (typeof window === "undefined") {
-    // servicename.namespace.svc.cluster.local
-    url =
-      "http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api/users/currentuser";
-    headers = { ...req.headers };
-  } else {
-    url = "/api/users/currentuser";
-  }
-  const res = await axios.get(url, { headers });
+IndexPage.getInitialProps = async (context) => {
+  const res = await CustomAxiosClient(context).get("/api/users/currentuser");
   return res.data;
 };
 
