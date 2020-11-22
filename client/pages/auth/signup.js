@@ -6,7 +6,7 @@ const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { doRequest, errors } = useRequest(
-    "http://ticketing.com/api/users/signup",
+    "/api/users/signup",
     "post",
     {
       email,
