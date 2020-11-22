@@ -1,11 +1,7 @@
 import CustomAxiosClient from "../api/axios-builder";
 
 const IndexPage = ({ currentUser }) => {
-  return currentUser ? (
-    <h1>hello {currentUser.email}</h1>
-  ) : (
-    <h1>not signed in</h1>
-  );
+  return <h1>Landing Page</h1>;
 };
 // executed in the server side
 // except when redirected from the same app
