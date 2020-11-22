@@ -1,19 +1,15 @@
 import "bootstrap/dist/css/bootstrap.css";
+
+import Header from "../components/header";
 import CustomAxiosClient from "../api/axios-builder";
 
 const AppComponent = ({ Component, pageProps, currentUser }) => {
-  return currentUser ? (
+  return (
     <div>
-      <h1>hello {currentUser.email}</h1>
-      <Component {...pageProps} />
-    </div>
-  ) : (
-    <div>
-      <h1>not signed in.</h1>
+      <Header currentUser={currentUser} />
       <Component {...pageProps} />
     </div>
   );
-  return;
 };
 AppComponent.getInitialProps = async (context) => {
   const res = await CustomAxiosClient(context.ctx).get(
