@@ -1,22 +1,22 @@
 import { useState } from "react";
 import axios from "axios";
+import useRequest from "../../hooks/use-request";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState([]);
+  const { doRequest, errors } = useRequest(
+    "http://ticketing.com/api/users/signup",
+    "post",
+    {
+      email,
+      password,
+    }
+  );
   const signUp = async (event) => {
     event.preventDefault();
-    try {
-      const res = await axios.post("http://ticketing.com/api/users/signup", {
-        email,
-        password,
-      });
-      setErrors([]);
-      const data = res.data;
-    } catch (error) {
-      setErrors(error.response.data.errors);
-    }
+
+    doRequest();
   };
   return (
     <div className="container">
@@ -40,20 +40,7 @@ const SignupPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {errors.length > 0 ? (
-          <div className="alert alert-danger">
-            <h3>Ooops...</h3>
-            <ul>
-              {errors.map((e) => (
-                <li className="my-0" key={e.message}>
-                  {e.message}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          ""
-        )}
+        {errors}
 
         <button className="btn btn-primary">Sign up</button>
       </form>
