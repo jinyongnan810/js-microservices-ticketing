@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { BadRequestError } from "../errors/bad-request-error";
-import { currentUser } from "../middlewares/current-user";
-import { requireAuth } from "../middlewares/require-auth";
+import { BadRequestError } from "@jinyongnan810/ticketing-common";
+import { currentUser } from "@jinyongnan810/ticketing-common";
+import { requireAuth } from "@jinyongnan810/ticketing-common";
 const router = express.Router();
 
 router.get(

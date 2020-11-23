@@ -8,8 +8,8 @@ import CurrentUserRouter from "./routers/current-user";
 import SignInRouter from "./routers/signin";
 import SignOutRouter from "./routers/signout";
 import SignUpRouter from "./routers/signup";
-import { handleError } from "./middlewares/error-handler";
-import { NotFoundError } from "./errors/not-found-error";
+import { handleError } from "@jinyongnan810/ticketing-common";
+import { NotFoundError } from "@jinyongnan810/ticketing-common";
 
 const app = express();
 app.set("trust proxy", true); //trust ingress nginx
