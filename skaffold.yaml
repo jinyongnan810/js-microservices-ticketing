@@ -18,6 +18,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: jinyongnan/ticketing-tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
     - image: jinyongnan/ticketing-client
       context: client
       docker:
