@@ -9,6 +9,7 @@ import { NotFoundError } from "@jinyongnan810/ticketing-common";
 
 import NewTicketRouter from "./routes/new";
 import ShowTicketRouter from "./routes/show";
+import AllTicketsRouter from "./routes/all";
 
 const app = express();
 app.set("trust proxy", true); //trust ingress nginx
@@ -25,6 +26,7 @@ app.use(currentUser);
 
 app.use(NewTicketRouter);
 app.use(ShowTicketRouter);
+app.use(AllTicketsRouter);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();
