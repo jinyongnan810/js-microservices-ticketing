@@ -11,4 +11,11 @@ stan.on("connect", () => {
   stan.publish("ticket-created", data, () => {
     console.log("Event published");
   });
+  stan.on("close", () => {
+    console.log("Publisher Closing...");
+    process.exit();
+  });
 });
+
+process.on("SIGINT", () => stan.close());
+process.on("SIGTERM", () => stan.close());
