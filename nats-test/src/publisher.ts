@@ -9,7 +9,12 @@ stan.on("connect", async () => {
     title: "ticket1",
     price: 77.11,
   };
-  await new TicketCreatedPublisher(stan).publish(data);
+
+  try {
+    await new TicketCreatedPublisher(stan).publish(data);
+  } catch (error) {
+    console.log(error);
+  }
   stan.on("close", () => {
     console.log("Publisher Closing...");
     process.exit();
