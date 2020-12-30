@@ -1,5 +1,7 @@
+import { Subjects } from "@jinyongnan810/ticketing-common";
 import request from "supertest";
 import { app } from "../../app";
+import { natsWrapper } from "../../events/nats-wrapper";
 import { Ticket } from "../../models/ticket";
 
 it("/api/tickets POST", async () => {
@@ -39,8 +41,21 @@ it("/api/tickets POST valid inputs", async () => {
     .set("Cookie", cookie)
     .send({ title: "title1", price: "101" });
   expect(res.status).toBe(201);
+  // db
   const createdOne = await Ticket.findOne({ userId: "123456" });
   expect(createdOne).toBeTruthy();
   expect(createdOne!.price).toBe(101);
   expect(createdOne!.title).toBe("title1");
+  // event
+  expect(natsWrapper.client.publish).toBeCalled();
+  expect(natsWrapper.client.publish).toBeCalledWith(
+    Subjects.TICKET_CREATED,
+    JSON.stringify({
+      id: createdOne?.id,
+      title: createdOne?.title,
+      price: createdOne?.price,
+      userId: createdOne?.userId,
+    }),
+    expect.any(Function)
+  );
 });

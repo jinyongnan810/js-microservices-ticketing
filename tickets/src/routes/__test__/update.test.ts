@@ -1,6 +1,8 @@
+import { Subjects } from "@jinyongnan810/ticketing-common";
 import { Mongoose } from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
+import { natsWrapper } from "../../events/nats-wrapper";
 import { Ticket } from "../../models/ticket";
 
 it("/api/tickets PUT need to signin", async () => {
@@ -87,8 +89,21 @@ it("/api/tickets PUT valid", async () => {
     .set("Cookie", cookie)
     .send({ title: "changed", price: "777.77" });
   expect(res.status).toEqual(200);
+  // db
   const updated = await Ticket.findById(newTicket._id);
   expect(updated).toBeTruthy();
   expect(updated!.price).toBe(777.77);
   expect(updated!.title).toBe("changed");
+  // event
+  expect(natsWrapper.client.publish).toBeCalled();
+  expect(natsWrapper.client.publish).toBeCalledWith(
+    Subjects.TICKET_UPDATED,
+    JSON.stringify({
+      id: updated?.id,
+      title: updated?.title,
+      price: updated?.price,
+      userId: updated?.userId,
+    }),
+    expect.any(Function)
+  );
 });
