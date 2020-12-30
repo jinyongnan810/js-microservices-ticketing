@@ -6,6 +6,8 @@ import {
 } from "@jinyongnan810/ticketing-common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
+import { natsWrapper } from "../events/nats-wrapper";
+import { TicketUpdatedPublisher } from "../events/publishers/ticket-updated-publisher";
 import { Ticket } from "../models/ticket";
 
 const Router = express.Router();
@@ -26,7 +28,6 @@ Router.put(
 
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    console.log("id is:", id);
     let found;
     try {
       found = await Ticket.findById(id);
@@ -44,6 +45,12 @@ Router.put(
     const { title, price } = req.body;
     found.set({ title, price });
     await found.save();
+    new TicketUpdatedPublisher(natsWrapper.client).publish({
+      id: found.id,
+      title: found.title,
+      price: found.price,
+      userId: found.userId,
+    });
     res.status(200).send(found);
   }
 );
