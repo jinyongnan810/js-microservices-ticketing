@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
+import { randomBytes } from "crypto";
 import { app } from "./app";
+import { natsWrapper } from "./events/nats-wrapper";
+
 const start = async () => {
   if (!process.env.JWT_KEY) {
     throw new Error("JWT_KEY not set.");
@@ -14,6 +17,16 @@ const start = async () => {
       useCreateIndex: true,
     });
     console.log("DB connected.");
+  } catch (error) {
+    console.log(error.messsage);
+  }
+
+  try {
+    await natsWrapper.connect(
+      "ticketing",
+      randomBytes(4).toString("hex"),
+      "http://nats-srv:4222"
+    );
   } catch (error) {
     console.log(error.messsage);
   }
