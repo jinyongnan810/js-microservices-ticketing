@@ -1,0 +1,9 @@
+import { NotFoundError, requireAuth } from "@jinyongnan810/ticketing-common";
+import express, { Request, Response } from "express";
+
+const Router = express.Router();
+
+Router.get("/api/orders", requireAuth, async (req: Request, res: Response) => {
+  res.status(200).send({});
+});
+export default Router;
