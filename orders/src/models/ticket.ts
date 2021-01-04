@@ -3,6 +3,7 @@ import { Order, OrderStatus } from "./order";
 
 // Describe attributes needed to create a ticket
 interface TicketAttrs {
+  id: string;
   title: string;
   price: number;
 }
@@ -43,7 +44,7 @@ const ticketSchema = new mongoose.Schema(
 ticketSchema.pre("save", async function (done) {});
 
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
-  return new Ticket(attrs);
+  return new Ticket({ ...attrs, _id: attrs.id });
 };
 ticketSchema.methods.isReserved = async function () {
   const existedOrder = await Order.findOne({
