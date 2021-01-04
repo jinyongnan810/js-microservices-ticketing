@@ -27,21 +27,21 @@ it("/api/orders/:orderId DELETE normal", async () => {
   const order1 = Order.build({
     ticket: ticket1,
     userId: "orderuser",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order1.save();
   const order2 = Order.build({
     ticket: ticket2,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order2.save();
   const order3 = Order.build({
     ticket: ticket3,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order3.save();
@@ -49,6 +49,17 @@ it("/api/orders/:orderId DELETE normal", async () => {
     .delete(`/api/orders/${order2.id.toString()}`)
     .set("Cookie", cookie);
   expect(res.status).toBe(204);
+  expect(natsWrapper.client.publish).toBeCalled();
+  expect(natsWrapper.client.publish).toBeCalledWith(
+    Subjects.ORDER_CANCELLED,
+    JSON.stringify({
+      id: order2.id,
+      ticket: {
+        id: ticket2.id,
+      },
+    }),
+    expect.any(Function)
+  );
 });
 it("/api/orders/:orderId DELETE not myself", async () => {
   const cookie = global.signup();
@@ -72,21 +83,21 @@ it("/api/orders/:orderId DELETE not myself", async () => {
   const order1 = Order.build({
     ticket: ticket1,
     userId: "orderuser",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order1.save();
   const order2 = Order.build({
     ticket: ticket2,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order2.save();
   const order3 = Order.build({
     ticket: ticket3,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order3.save();
@@ -94,4 +105,5 @@ it("/api/orders/:orderId DELETE not myself", async () => {
     .delete(`/api/orders/${order1.id.toString()}`)
     .set("Cookie", cookie);
   expect(res.status).toBe(404);
+  expect(natsWrapper.client.publish).not.toBeCalled();
 });

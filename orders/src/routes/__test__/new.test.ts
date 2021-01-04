@@ -47,18 +47,6 @@ it("/api/orders POST ticket not found", async () => {
   // db
   const createdOne = await Order.findOne({ ticket: ticket });
   expect(createdOne).toBeNull();
-  // event
-  //   expect(natsWrapper.client.publish).toBeCalled();
-  //   expect(natsWrapper.client.publish).toBeCalledWith(
-  //     Subjects.TICKET_CREATED,
-  //     JSON.stringify({
-  //       id: createdOne?.id,
-  //       title: createdOne?.title,
-  //       price: createdOne?.price,
-  //       userId: createdOne?.userId,
-  //     }),
-  //     expect.any(Function)
-  //   );
 });
 it("/api/orders POST ticket reserved created ", async () => {
   const cookie = global.signup();
@@ -70,7 +58,7 @@ it("/api/orders POST ticket reserved created ", async () => {
   const order = Order.build({
     ticket: ticket,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order.save();
@@ -93,7 +81,7 @@ it("/api/orders POST ticket reserved awaiting paymen ", async () => {
   const order = Order.build({
     ticket: ticket,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.AWAITING_PAYMENT,
   });
   await order.save();
@@ -105,6 +93,7 @@ it("/api/orders POST ticket reserved awaiting paymen ", async () => {
   // db
 
   // event
+  expect(natsWrapper.client.publish).not.toBeCalled();
 });
 it("/api/orders POST ticket reserved complete ", async () => {
   const cookie = global.signup();
@@ -116,7 +105,7 @@ it("/api/orders POST ticket reserved complete ", async () => {
   const order = Order.build({
     ticket: ticket,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.COMPLETE,
   });
   await order.save();
@@ -128,6 +117,7 @@ it("/api/orders POST ticket reserved complete ", async () => {
   // db
 
   // event
+  expect(natsWrapper.client.publish).not.toBeCalled();
 });
 it("/api/orders POST ticket reserved cancelled ", async () => {
   const cookie = global.signup();
@@ -139,7 +129,7 @@ it("/api/orders POST ticket reserved cancelled ", async () => {
   const order = Order.build({
     ticket: ticket,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CANCELLED,
   });
   await order.save();
@@ -152,18 +142,6 @@ it("/api/orders POST ticket reserved cancelled ", async () => {
   const createdOne = await Order.findOne({ ticket: ticket });
   expect(createdOne).toBeTruthy();
   expect(createdOne!.ticket.toString()).toEqual(ticket.id);
-  // event
-  //   expect(natsWrapper.client.publish).toBeCalled();
-  //   expect(natsWrapper.client.publish).toBeCalledWith(
-  //     Subjects.TICKET_CREATED,
-  //     JSON.stringify({
-  //       id: createdOne?.id,
-  //       title: createdOne?.title,
-  //       price: createdOne?.price,
-  //       userId: createdOne?.userId,
-  //     }),
-  //     expect.any(Function)
-  //   );
 });
 it("/api/orders POST valid inputs", async () => {
   const cookie = global.signup();
@@ -181,18 +159,21 @@ it("/api/orders POST valid inputs", async () => {
   const createdOne = await Order.findOne({ ticket: ticket });
   expect(createdOne).toBeTruthy();
   expect(createdOne!.ticket.toString()).toEqual(ticket.id);
-  // event
-  //   expect(natsWrapper.client.publish).toBeCalled();
-  //   expect(natsWrapper.client.publish).toBeCalledWith(
-  //     Subjects.TICKET_CREATED,
-  //     JSON.stringify({
-  //       id: createdOne?.id,
-  //       title: createdOne?.title,
-  //       price: createdOne?.price,
-  //       userId: createdOne?.userId,
-  //     }),
-  //     expect.any(Function)
-  //   );
+  expect(natsWrapper.client.publish).toBeCalled();
+  expect(natsWrapper.client.publish).toBeCalledWith(
+    Subjects.ORDER_CREATED,
+    JSON.stringify({
+      id: createdOne!.id,
+      userId: createdOne!.userId,
+      status: createdOne!.status,
+      expiredAt: createdOne!.expiredAt,
+      ticket: {
+        id: ticket.id,
+        price: ticket.price,
+      },
+    }),
+    expect.any(Function)
+  );
 });
 
 it.todo("check event");

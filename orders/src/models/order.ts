@@ -5,7 +5,7 @@ import { TicketDoc } from "./ticket";
 // Describe attributes needed to create a Order
 interface OrderAttrs {
   userId: string;
-  expireAt: Date;
+  expiredAt: Date;
   status: OrderStatus;
   ticket: TicketDoc;
 }
@@ -16,7 +16,7 @@ interface OrderModel extends mongoose.Model<OrderDoc> {
 // Describe a Order document
 interface OrderDoc extends mongoose.Document {
   userId: string;
-  expireAt: Date;
+  expiredAt: Date;
   status: OrderStatus;
   ticket: TicketDoc;
 }
@@ -27,7 +27,7 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    expireAt: {
+    expiredAt: {
       type: mongoose.Schema.Types.Date,
     },
     status: {

@@ -46,21 +46,21 @@ it("/api/orders GET normal", async () => {
   const order1 = Order.build({
     ticket: ticket1,
     userId: "orderuser",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order1.save();
   const order2 = Order.build({
     ticket: ticket2,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order2.save();
   const order3 = Order.build({
     ticket: ticket3,
     userId: "123456",
-    expireAt: new Date(),
+    expiredAt: new Date(),
     status: OrderStatus.CREATED,
   });
   await order3.save();
