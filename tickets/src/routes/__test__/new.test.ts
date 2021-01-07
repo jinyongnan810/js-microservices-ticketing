@@ -55,6 +55,7 @@ it("/api/tickets POST valid inputs", async () => {
       title: createdOne?.title,
       price: createdOne?.price,
       userId: createdOne?.userId,
+      version: createdOne?.version,
     }),
     expect.any(Function)
   );

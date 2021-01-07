@@ -103,6 +103,7 @@ it("/api/tickets PUT valid", async () => {
       title: updated?.title,
       price: updated?.price,
       userId: updated?.userId,
+      version: updated?.version,
     }),
     expect.any(Function)
   );

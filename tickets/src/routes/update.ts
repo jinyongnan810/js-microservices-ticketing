@@ -50,6 +50,7 @@ Router.put(
       title: found.title,
       price: found.price,
       userId: found.userId,
+      version: found.version,
     });
     res.status(200).send(found);
   }

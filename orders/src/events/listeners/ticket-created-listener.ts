@@ -11,7 +11,7 @@ export class TicketCreatedListener extends Listener<TicketCreatedEvent> {
   subject: Subjects.TICKET_CREATED = Subjects.TICKET_CREATED;
   queueGroupName: string = queueGroupName; // an event is sent to one service in a queue group
   async onMessage(
-    data: { id: string; title: string; price: number; userId: string },
+    data: TicketCreatedEvent["data"],
     msg: Message
   ): Promise<void> {
     const { id, title, price } = data;
