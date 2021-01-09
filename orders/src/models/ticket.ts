@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+import { idText } from "typescript";
 import { Order, OrderStatus } from "./order";
 
 // Describe attributes needed to create a ticket
@@ -11,6 +12,7 @@ interface TicketAttrs {
 // Describe a ticket model
 interface TicketModel extends mongoose.Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc;
+  findByEvent(event: { id: string; version: number }): Promise<TicketDoc>;
 }
 // Describe a ticket document
 interface TicketDoc extends mongoose.Document {
@@ -50,6 +52,13 @@ ticketSchema.pre("save", async function (done) {});
 
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
   return new Ticket({ ...attrs, _id: attrs.id });
+};
+ticketSchema.statics.findByEvent = async (event: {
+  id: string;
+  version: number;
+}) => {
+  const { id, version } = event;
+  return Ticket.findOne({ _id: id, version: version - 1 });
 };
 ticketSchema.methods.isReserved = async function () {
   const existedOrder = await Order.findOne({
