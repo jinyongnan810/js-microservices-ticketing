@@ -1,5 +1,6 @@
 import { Subjects } from "@jinyongnan810/ticketing-common";
 import request from "supertest";
+import mongoose from "mongoose";
 import { app } from "../../app";
 import { natsWrapper } from "../../events/nats-wrapper";
 import { Order, OrderStatus } from "../../models/order";
@@ -36,6 +37,7 @@ it("/api/orders POST invalid inputs", async () => {
 it("/api/orders POST ticket not found", async () => {
   const cookie = global.signup();
   const ticket = await Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket",
     price: 111,
   });
@@ -51,6 +53,7 @@ it("/api/orders POST ticket not found", async () => {
 it("/api/orders POST ticket reserved created ", async () => {
   const cookie = global.signup();
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket",
     price: 111,
   });
@@ -74,6 +77,7 @@ it("/api/orders POST ticket reserved created ", async () => {
 it("/api/orders POST ticket reserved awaiting paymen ", async () => {
   const cookie = global.signup();
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket",
     price: 111,
   });
@@ -98,6 +102,7 @@ it("/api/orders POST ticket reserved awaiting paymen ", async () => {
 it("/api/orders POST ticket reserved complete ", async () => {
   const cookie = global.signup();
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket",
     price: 111,
   });
@@ -122,6 +127,7 @@ it("/api/orders POST ticket reserved complete ", async () => {
 it("/api/orders POST ticket reserved cancelled ", async () => {
   const cookie = global.signup();
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket",
     price: 111,
   });
@@ -146,6 +152,7 @@ it("/api/orders POST ticket reserved cancelled ", async () => {
 it("/api/orders POST valid inputs", async () => {
   const cookie = global.signup();
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket",
     price: 111,
   });
@@ -167,6 +174,7 @@ it("/api/orders POST valid inputs", async () => {
       userId: createdOne!.userId,
       status: createdOne!.status,
       expiredAt: createdOne!.expiredAt,
+      version: createdOne!.version,
       ticket: {
         id: ticket.id,
         price: ticket.price,

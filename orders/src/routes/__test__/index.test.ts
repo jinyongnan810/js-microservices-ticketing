@@ -1,5 +1,6 @@
 import { Subjects } from "@jinyongnan810/ticketing-common";
 import request from "supertest";
+import mongoose from "mongoose";
 import { app } from "../../app";
 import { natsWrapper } from "../../events/nats-wrapper";
 import { Order, OrderStatus } from "../../models/order";
@@ -28,16 +29,19 @@ it("/api/orders GET normal", async () => {
   const cookie = global.signup();
   // 3 tickets
   const ticket1 = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket1",
     price: 111,
   });
   await ticket1.save();
   const ticket2 = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket2",
     price: 222,
   });
   await ticket2.save();
   const ticket3 = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: "testTicket3",
     price: 333,
   });

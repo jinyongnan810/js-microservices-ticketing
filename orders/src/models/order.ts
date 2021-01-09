@@ -1,5 +1,6 @@
 import { OrderStatus } from "@jinyongnan810/ticketing-common";
 import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { TicketDoc } from "./ticket";
 
 // Describe attributes needed to create a Order
@@ -19,6 +20,7 @@ interface OrderDoc extends mongoose.Document {
   expiredAt: Date;
   status: OrderStatus;
   ticket: TicketDoc;
+  version: number;
 }
 
 const OrderSchema = new mongoose.Schema(
@@ -52,7 +54,9 @@ const OrderSchema = new mongoose.Schema(
     },
   }
 );
-
+// add version control
+OrderSchema.set("versionKey", "version");
+OrderSchema.plugin(updateIfCurrentPlugin);
 OrderSchema.pre("save", async function (done) {});
 
 OrderSchema.statics.build = (attrs: OrderAttrs) => {
