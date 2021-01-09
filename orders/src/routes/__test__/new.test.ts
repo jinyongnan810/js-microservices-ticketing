@@ -183,5 +183,3 @@ it("/api/orders POST valid inputs", async () => {
     expect.any(Function)
   );
 });
-
-it.todo("check event");
