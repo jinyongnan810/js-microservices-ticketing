@@ -1,5 +1,5 @@
 import { Subjects } from "@jinyongnan810/ticketing-common";
-import { Mongoose } from "mongoose";
+import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
 import { natsWrapper } from "../../events/nats-wrapper";
@@ -107,4 +107,29 @@ it("/api/tickets PUT valid", async () => {
     }),
     expect.any(Function)
   );
+});
+it("/api/tickets PUT valid but is reserved", async () => {
+  const newTicket = Ticket.build({
+    title: "abc",
+    price: 100,
+    userId: "123456",
+  });
+  await newTicket.save();
+  newTicket.orderId = new mongoose.Types.ObjectId().toHexString();
+  await newTicket.save();
+
+  const cookie = global.signup();
+
+  const res = await request(app)
+    .put(`/api/tickets/${newTicket._id}`)
+    .set("Cookie", cookie)
+    .send({ title: "changed", price: "777.77" });
+  expect(res.status).toEqual(401);
+  // db
+  const updated = await Ticket.findById(newTicket._id);
+  expect(updated).toBeTruthy();
+  expect(updated!.price).toBe(100);
+  expect(updated!.title).toBe("abc");
+  // event
+  expect(natsWrapper.client.publish).not.toBeCalled();
 });

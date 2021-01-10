@@ -41,6 +41,9 @@ Router.put(
     if (userId !== found.userId) {
       throw new UnAuthorizedError();
     }
+    if (found.orderId) {
+      throw new UnAuthorizedError();
+    }
 
     const { title, price } = req.body;
     found.set({ title, price });
