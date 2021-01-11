@@ -2,6 +2,7 @@ import {
   NotFoundError,
   OrderStatus,
   requireAuth,
+  UnAuthorizedError,
 } from "@jinyongnan810/ticketing-common";
 import express, { Request, Response } from "express";
 import { natsWrapper } from "../events/nats-wrapper";
@@ -16,6 +17,12 @@ Router.delete(
   async (req: Request, res: Response) => {
     const order = await Order.findById(req.params.orderId).populate("ticket");
     if (order && order.userId === req.currentUser!.id) {
+      if (
+        order.status === OrderStatus.CANCELLED ||
+        order.status === OrderStatus.COMPLETE
+      ) {
+        throw new UnAuthorizedError();
+      }
       order.status = OrderStatus.CANCELLED;
       await order.save();
       // publish order cancelled event

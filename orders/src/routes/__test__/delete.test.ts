@@ -66,6 +66,46 @@ it("/api/orders/:orderId DELETE normal", async () => {
     expect.any(Function)
   );
 });
+it("/api/orders/:orderId DELETE not for cancelled", async () => {
+  const cookie = global.signup();
+  const ticket2 = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
+    title: "testTicket2",
+    price: 222,
+  });
+  await ticket2.save();
+  const ticket3 = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
+    title: "testTicket3",
+    price: 333,
+  });
+  await ticket3.save();
+  const order2 = Order.build({
+    ticket: ticket2,
+    userId: "123456",
+    expiredAt: new Date(),
+    status: OrderStatus.CANCELLED,
+  });
+  await order2.save();
+  const order3 = Order.build({
+    ticket: ticket3,
+    userId: "123456",
+    expiredAt: new Date(),
+    status: OrderStatus.COMPLETE,
+  });
+  await order3.save();
+  const res = await request(app)
+    .delete(`/api/orders/${order2.id.toString()}`)
+    .set("Cookie", cookie);
+  expect(res.status).toBe(401);
+  expect(natsWrapper.client.publish).not.toBeCalled();
+  const res2 = await request(app)
+    .delete(`/api/orders/${order3.id.toString()}`)
+    .set("Cookie", cookie);
+  expect(res2.status).toBe(401);
+  expect(natsWrapper.client.publish).not.toBeCalled();
+});
+
 it("/api/orders/:orderId DELETE not myself", async () => {
   const cookie = global.signup();
   // 3 tickets

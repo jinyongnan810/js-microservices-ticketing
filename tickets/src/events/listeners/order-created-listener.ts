@@ -5,7 +5,6 @@ import {
 } from "@jinyongnan810/ticketing-common";
 import { Message } from "node-nats-streaming";
 import { Ticket } from "../../models/ticket";
-import { natsWrapper } from "../nats-wrapper";
 import { TicketUpdatedPublisher } from "../publishers/ticket-updated-publisher";
 import { queueGroupName } from "./queue-group-name";
 
@@ -21,15 +20,19 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
     if (!ticketFound) {
       throw new Error("Ticket not found");
     }
+    if (ticketFound.orderId) {
+      throw new Error("Ticket reserved");
+    }
     ticketFound.orderId = id;
     await ticketFound.save();
     // publish ticket updated event
-    new TicketUpdatedPublisher(natsWrapper.client).publish({
+    await new TicketUpdatedPublisher(this.client).publish({
       id: ticketFound.id,
       title: ticketFound.title,
       price: ticketFound.price,
       userId: ticketFound.userId,
       version: ticketFound.version,
+      orderId: ticketFound.orderId,
     });
     msg.ack();
   }

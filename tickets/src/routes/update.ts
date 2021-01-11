@@ -48,12 +48,13 @@ Router.put(
     const { title, price } = req.body;
     found.set({ title, price });
     await found.save();
-    new TicketUpdatedPublisher(natsWrapper.client).publish({
+    await new TicketUpdatedPublisher(natsWrapper.client).publish({
       id: found.id,
       title: found.title,
       price: found.price,
       userId: found.userId,
       version: found.version,
+      orderId: found.orderId,
     });
     res.status(200).send(found);
   }
