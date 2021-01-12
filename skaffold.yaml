@@ -42,3 +42,11 @@ build:
         manual:
           - src: '**/*.js'
             dest: .
+    - image: jinyongnan/ticketing-expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .
