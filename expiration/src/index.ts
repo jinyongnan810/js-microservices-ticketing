@@ -1,4 +1,5 @@
 import { randomBytes } from "crypto";
+import { OrderCreatedListener } from "./events/listeners/order-created-listener";
 import { natsWrapper } from "./events/nats-wrapper";
 
 const start = async () => {
@@ -24,6 +25,7 @@ const start = async () => {
     });
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
+    new OrderCreatedListener(natsWrapper.client).listen();
   } catch (error) {
     console.log(error.messsage);
   }
