@@ -34,14 +34,6 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: jinyongnan/ticketing-client
-      context: client
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: '**/*.js'
-            dest: .
     - image: jinyongnan/ticketing-expiration
       context: expiration
       docker:
@@ -49,4 +41,20 @@ build:
       sync:
         manual:
           - src: 'src/**/*.ts'
+            dest: .
+    - image: jinyongnan/ticketing-payments
+      context: payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: jinyongnan/ticketing-client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
             dest: .
