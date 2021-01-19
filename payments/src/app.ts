@@ -6,6 +6,7 @@ import cookieSesion from "cookie-session";
 
 import { currentUser, handleError } from "@jinyongnan810/ticketing-common";
 import { NotFoundError } from "@jinyongnan810/ticketing-common";
+import { NewPaymentRouter } from "./routes/new";
 
 const app = express();
 app.set("trust proxy", true); //trust ingress nginx
@@ -19,6 +20,8 @@ app.use(
 
 // get auth info
 app.use(currentUser);
+
+app.use(NewPaymentRouter);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();
