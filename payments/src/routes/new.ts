@@ -8,6 +8,8 @@ import {
 } from "@jinyongnan810/ticketing-common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
+import { natsWrapper } from "../events/nats-wrapper";
+import { PaymentCreatedPublisher } from "../events/publishers/PaymentCreatedPublisher";
 import { Order } from "../models/order";
 import { Payment } from "../models/payment";
 import { stripe } from "../stripe";
@@ -32,14 +34,21 @@ router.post(
     ) {
       throw new BadRequestError("Order not waiting for payment.");
     }
+    // charge
     const charge = await stripe.charges.create({
       amount: order.price * 100, // usd cents
       currency: "usd",
       source: token,
     });
+    // save payment data
     const payment = Payment.build({ orderId: orderId, paymentId: charge.id });
     await payment.save();
-    res.send({});
+    // publish event
+    await new PaymentCreatedPublisher(natsWrapper.client).publish({
+      orderId,
+      paymentId: charge.id,
+    });
+    res.status(201).send({ id: payment.id });
   }
 );
 export { router as NewPaymentRouter };

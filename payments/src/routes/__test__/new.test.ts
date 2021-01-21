@@ -1,4 +1,8 @@
-import { OrderStatus, Subjects } from "@jinyongnan810/ticketing-common";
+import {
+  OrderStatus,
+  Subjects,
+  PaymentCreatedEvent,
+} from "@jinyongnan810/ticketing-common";
 import request from "supertest";
 import mongoose from "mongoose";
 import { app } from "../../app";
@@ -86,7 +90,7 @@ it("/api/payments POST normal", async () => {
     .post("/api/payments")
     .set("Cookie", cookie)
     .send({ orderId: order.id, token: "tok_visa" });
-  expect(res.status).toBe(200);
+  expect(res.status).toBe(201);
   // stripe call
   expect(stripe.charges.create).toHaveBeenCalled();
   const params = (stripe.charges.create as jest.Mock).mock.calls[0][0];
@@ -99,4 +103,15 @@ it("/api/payments POST normal", async () => {
     paymentId: "stripe payment id",
   });
   expect(payment).toBeTruthy();
+  // check publishing event
+  expect(natsWrapper.client.publish).toHaveBeenCalledTimes(1);
+  expect((natsWrapper.client.publish as jest.Mock).mock.calls[0][0]).toEqual(
+    Subjects.PAYMENT_CREATED
+  );
+  expect((natsWrapper.client.publish as jest.Mock).mock.calls[0][1]).toEqual(
+    JSON.stringify({
+      orderId: order.id,
+      paymentId: payment!.paymentId,
+    })
+  );
 });
