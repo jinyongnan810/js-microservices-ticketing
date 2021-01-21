@@ -22,6 +22,7 @@ export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
     }
     order.status = OrderStatus.COMPLETE;
     await order.save();
+    // dont need to publish an order-updated event because no one will change the order ever after
 
     msg.ack();
   }
