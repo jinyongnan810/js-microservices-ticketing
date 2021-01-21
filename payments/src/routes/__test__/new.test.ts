@@ -5,6 +5,7 @@ import { app } from "../../app";
 import { natsWrapper } from "../../events/nats-wrapper";
 import { Order } from "../../models/order";
 import { stripe } from "../../stripe";
+import { Payment } from "../../models/payment";
 jest.mock("../../stripe");
 it("/api/payments POST need auth", async () => {
   const res = await request(app).post("/api/payments").send({});
@@ -86,9 +87,16 @@ it("/api/payments POST normal", async () => {
     .set("Cookie", cookie)
     .send({ orderId: order.id, token: "tok_visa" });
   expect(res.status).toBe(200);
+  // stripe call
   expect(stripe.charges.create).toHaveBeenCalled();
   const params = (stripe.charges.create as jest.Mock).mock.calls[0][0];
   expect(params["amount"]).toEqual(11100);
   expect(params["currency"]).toEqual("usd");
   expect(params["source"]).toEqual("tok_visa");
+  // payment creation
+  const payment = await Payment.findOne({
+    orderId: order.id,
+    paymentId: "stripe payment id",
+  });
+  expect(payment).toBeTruthy();
 });

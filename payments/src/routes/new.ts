@@ -9,6 +9,7 @@ import {
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import { Order } from "../models/order";
+import { Payment } from "../models/payment";
 import { stripe } from "../stripe";
 const router = express.Router();
 router.post(
@@ -31,12 +32,13 @@ router.post(
     ) {
       throw new BadRequestError("Order not waiting for payment.");
     }
-    await stripe.charges.create({
+    const charge = await stripe.charges.create({
       amount: order.price * 100, // usd cents
       currency: "usd",
       source: token,
     });
-
+    const payment = Payment.build({ orderId: orderId, paymentId: charge.id });
+    await payment.save();
     res.send({});
   }
 );
