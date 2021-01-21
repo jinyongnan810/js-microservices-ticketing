@@ -4,10 +4,12 @@ import mongoose from "mongoose";
 import { app } from "../../app";
 import { natsWrapper } from "../../events/nats-wrapper";
 import { Order } from "../../models/order";
-
+import { stripe } from "../../stripe";
+jest.mock("../../stripe");
 it("/api/payments POST need auth", async () => {
   const res = await request(app).post("/api/payments").send({});
   expect(res.status).toBe(401);
+  expect(stripe.charges.create).not.toHaveBeenCalled();
 });
 
 it("/api/payments POST has auth", async () => {
@@ -17,6 +19,7 @@ it("/api/payments POST has auth", async () => {
     .set("Cookie", cookie)
     .send({});
   expect(res.status).not.toBe(401);
+  expect(stripe.charges.create).not.toHaveBeenCalled();
 });
 
 it("/api/payments POST invalid inputs", async () => {
@@ -28,6 +31,7 @@ it("/api/payments POST invalid inputs", async () => {
   expect(res.status).toBe(400);
   expect(res.body.errors[0]["field"]).toBe("orderId");
   expect(res.body.errors[1]["field"]).toBe("token");
+  expect(stripe.charges.create).not.toHaveBeenCalled();
 });
 
 it("/api/payments POST order not exist", async () => {
@@ -48,6 +52,7 @@ it("/api/payments POST order not exist", async () => {
       token: "abc",
     });
   expect(res.status).toBe(404);
+  expect(stripe.charges.create).not.toHaveBeenCalled();
 });
 it("/api/payments POST invalid user", async () => {
   const order = Order.build({
@@ -64,6 +69,7 @@ it("/api/payments POST invalid user", async () => {
     .set("Cookie", cookie)
     .send({ orderId: order.id, token: "abc" });
   expect(res.status).toBe(401);
+  expect(stripe.charges.create).not.toHaveBeenCalled();
 });
 it("/api/payments POST normal", async () => {
   const order = Order.build({
@@ -78,6 +84,11 @@ it("/api/payments POST normal", async () => {
   const res = await request(app)
     .post("/api/payments")
     .set("Cookie", cookie)
-    .send({ orderId: order.id, token: "abc" });
+    .send({ orderId: order.id, token: "tok_visa" });
   expect(res.status).toBe(200);
+  expect(stripe.charges.create).toHaveBeenCalled();
+  const params = (stripe.charges.create as jest.Mock).mock.calls[0][0];
+  expect(params["amount"]).toEqual(11100);
+  expect(params["currency"]).toEqual("usd");
+  expect(params["source"]).toEqual("tok_visa");
 });
