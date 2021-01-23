@@ -5,7 +5,7 @@ const IndexPage = ({ currentUser }) => {
 };
 // executed in the server side
 // except when redirected from the same app
-IndexPage.getInitialProps = async (context) => {
+IndexPage.getInitialProps = async (context, client, currentUser) => {
   return {};
 };
 

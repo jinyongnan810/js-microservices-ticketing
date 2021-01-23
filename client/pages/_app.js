@@ -12,13 +12,16 @@ const AppComponent = ({ Component, pageProps, currentUser }) => {
   );
 };
 AppComponent.getInitialProps = async (context) => {
-  const res = await CustomAxiosClient(context.ctx).get(
-    "/api/users/currentuser"
-  );
+  const client = CustomAxiosClient(context.ctx);
+  const res = await client.get("/api/users/currentuser");
   // call nested component's getInitialProps
   let pageProps;
   if (context.Component.getInitialProps) {
-    pageProps = await context.Component.getInitialProps(context.ctx);
+    pageProps = await context.Component.getInitialProps(
+      context.ctx,
+      client,
+      res.currentUser
+    );
   }
   return { pageProps, currentUser: res.data.currentUser };
 };
