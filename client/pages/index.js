@@ -6,8 +6,7 @@ const IndexPage = ({ currentUser }) => {
 // executed in the server side
 // except when redirected from the same app
 IndexPage.getInitialProps = async (context) => {
-  const res = await CustomAxiosClient(context).get("/api/users/currentuser");
-  return res.data;
+  return {};
 };
 
 export default IndexPage;
