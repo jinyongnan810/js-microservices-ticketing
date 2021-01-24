@@ -8,7 +8,8 @@ const ShowTicket = ({ ticket, currentUser }) => {
     "post",
     { ticketId: ticket.id },
     (order) => {
-      Router.reload();
+      // Router.reload();
+      Router.push("/orders/[orderId]", `/orders/${order.id}`);
     }
   );
   const buyTicket = (e) => {
