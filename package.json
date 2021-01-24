@@ -1,0 +1,20 @@
+{
+  "name": "ticketing",
+  "version": "1.0.0",
+  "description": "only used for updating common npm modules",
+  "main": "index.js",
+  "scripts": {
+    "u": "npm run u --prefix auth && npm run u --prefix expiration && npm run u --prefix orders && npm run u --prefix payments && npm run u --prefix tickets"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jinyongnan810/js-microservices-ticketing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jinyongnan810/js-microservices-ticketing/issues"
+  },
+  "homepage": "https://github.com/jinyongnan810/js-microservices-ticketing#readme"
+}

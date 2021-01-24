@@ -1,5 +1,11 @@
 ## setups
 
+### update common npm module
+
+```
+npm run u
+```
+
 ### set k8s secret
 
 ```

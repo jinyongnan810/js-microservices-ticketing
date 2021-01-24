@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "test": "jest --watchAll --no-cache"
+    "test": "jest --watchAll --no-cache",
+    "u": "npm update @jinyongnan810/ticketing-common"
   },
   "jest": {
     "preset": "ts-jest",
@@ -18,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@jinyongnan810/ticketing-common": "^1.0.12",
+    "@jinyongnan810/ticketing-common": "^1.0.14",
     "@types/bull": "^3.14.4",
     "bull": "^3.20.0",
     "ts-node-dev": "^1.0.0",
