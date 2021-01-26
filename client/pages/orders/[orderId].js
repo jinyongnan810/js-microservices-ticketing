@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
+import StripeCheckout from "react-stripe-checkout";
 
-const ShowOrder = ({ order }) => {
+const ShowOrder = ({ order, currentUser }) => {
   const [countDown, setCountDown] = useState("");
-
   useEffect(() => {
     const calTimeLeft = () => {
       let diff = new Date(order.expiredAt) - new Date();
@@ -26,6 +26,7 @@ const ShowOrder = ({ order }) => {
       clearInterval(timer);
     };
   }, [order]);
+
   if (countDown === "no time") {
     return (
       <div>
@@ -33,11 +34,20 @@ const ShowOrder = ({ order }) => {
       </div>
     );
   }
+
   return (
     <div>
       <h1>Order Payment</h1>
       <h3>{countDown} left to finish payment.</h3>
-      <button className="btn btn-primary">Pay</button>
+      <br />
+      <StripeCheckout
+        token={(token) => {
+          console.log("stripe return token:", token);
+        }}
+        amount={order.ticket.price * 100}
+        stripeKey="pk_test_51IBTOcKRyFK3tEfd8O3q3YJ97zxsWad6s8rUAGG23kOMESxe5wo5xENIIuOwrPsgCoFap3iIhYA9Fh8tauYPAhNw00ITsh8evk"
+        email={currentUser.email}
+      />
     </div>
   );
 };
