@@ -21,7 +21,8 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
       version: version - 1,
     });
     if (!order) {
-      throw new Error(`Order not found for id:${id}`);
+      console.log(`Order not found for id:${id}`);
+      return;
     }
     order.status = OrderStatus.CANCELLED;
     await order.save();

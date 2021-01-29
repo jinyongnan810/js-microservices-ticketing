@@ -39,7 +39,6 @@ const IndexPage = ({ currentUser, tickets }) => {
 // except when redirected from the same app
 IndexPage.getInitialProps = async (context, client, currentUser) => {
   const { data } = await client.get("/api/tickets");
-  console.log("getinitialprops data", data);
   return { tickets: data };
 };
 
