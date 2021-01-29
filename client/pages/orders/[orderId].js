@@ -1,3 +1,4 @@
+import Router from "next/router";
 import React, { useEffect, useState } from "react";
 import StripeCheckout from "react-stripe-checkout";
 import UseRequest from "../../hooks/use-request";
@@ -10,6 +11,7 @@ const ShowOrder = ({ order, currentUser }) => {
     { orderId: order.id },
     ({ id }) => {
       console.log("payment success:", id);
+      Router.push("/orders");
     }
   );
   useEffect(() => {
@@ -44,6 +46,14 @@ const ShowOrder = ({ order, currentUser }) => {
     );
   }
 
+  if (order.status !== "CREATED") {
+    return (
+      <div>
+        <h3>Payment Not Available.</h3>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h1>Order Payment</h1>
@@ -64,7 +74,7 @@ const ShowOrder = ({ order, currentUser }) => {
 ShowOrder.getInitialProps = async (context, client, currentUser) => {
   const { orderId } = context.query;
   const { data } = await client.get(`/api/orders/${orderId}`);
-
+  console.log("cur:", currentUser);
   return { order: { ...data }, currentUser };
 };
 

@@ -17,7 +17,7 @@ export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
   ): Promise<void> {
     const { orderId } = data;
     const order = await Order.findById(orderId);
-    if (!order) {
+    if (!order || order.status !== OrderStatus.CREATED) {
       throw new Error("Order not found.");
     }
     order.status = OrderStatus.COMPLETE;

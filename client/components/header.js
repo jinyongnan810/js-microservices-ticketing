@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const header = ({ currentUser }) => {
   const list = [
+    currentUser && { href: "/orders", title: "My Orders" },
     currentUser && { href: "/tickets/new", title: "Create A Ticket" },
     currentUser && { href: "/auth/signout", title: "Sign Out" },
     !currentUser && { href: "/auth/signup", title: "Sign Up" },
