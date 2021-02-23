@@ -10,6 +10,7 @@ npm run u
 
 ```
 kubectl create secret generic jwt-secret --from-literal JWT_KEY=kjsjfksldjfsfsl
+kubectl create secret generic stripe-secret --from-literal STRIPE_KEY=kjsjfksldjfsfsl
 ```
 
 ### deploy nginx ingress controller
