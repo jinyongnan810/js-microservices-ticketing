@@ -1,0 +1,25 @@
+name: deploy-expiration
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "expiration/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd expiration && docker build -t jinyongnan/expiration .
+      - run: docker login -u $MY_DOCKER_USERNAME -p $MY_DOCKER_PASSWORD
+        env:
+          MY_DOCKER_USERNAME: ${{ secrets.MY_DOCKER_USERNAME }}
+          MY_DOCKER_PASSWORD: ${{ secrets.MY_DOCKER_PASSWORD }}
+      - run: docker push jinyongnan/expiration
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.MY_DO_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save ticketing
+      - run: kubectl rollout restart deployment expiration-depl
