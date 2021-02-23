@@ -1,0 +1,20 @@
+name: deploy-auth
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "auth/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd auth && docker build -t jinyongnan/auth .
+      - run: docker login -u $MY_DOCKER_USERNAME -p $MY_DOCKER_PASSWORD
+        env:
+          MY_DOCKER_USERNAME: ${{ secrets.MY_DOCKER_USERNAME }}
+          MY_DOCKER_PASSWORD: ${{ secrets.MY_DOCKER_PASSWORD }}
+      - run: docker push jinyongnan/auth
